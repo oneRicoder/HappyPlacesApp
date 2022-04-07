@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.happyplacesapp.R
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
+import com.example.happyplacesapp.models.HappyPlaceModel
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -120,7 +121,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLis
                     when(which){
                         0 -> choosePhotoFromGallery()
                         1 -> {
-                            Toast.makeText(this,"coming soon",Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(this,"coming soon",Toast.LENGTH_SHORT).show()
                             picFromCamera()
                         }
                     }
@@ -128,31 +129,59 @@ class AddHappyPlaceActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLis
                 pictureDialog.show()
             }
             R.id.btn_save -> {
-                // TODO save the datamodel to database
+                when{
+                    binding?.etTitle?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this,"Please Enter the Title",Toast.LENGTH_SHORT).show()
+                    }
+                    binding?.etDescription?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this,"Please Enter the Description",Toast.LENGTH_SHORT).show()
+                    }
+                    binding?.etDate?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this,"Please Enter the Date",Toast.LENGTH_SHORT).show()
+                    }
+                    binding?.etLocation?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this,"Please Enter the Location",Toast.LENGTH_SHORT).show()
+                    }
+                    saveImageToInternalStorage == null -> {
+                        Toast.makeText(this,"Please Select an Image",Toast.LENGTH_SHORT).show()
+                    }else -> {
+                        val happyPlaceModel = HappyPlaceModel(
+                            0,
+                            binding?.etTitle?.text.toString(),
+                            saveImageToInternalStorage.toString(),
+                            binding?.etDescription?.text.toString(),
+                            binding?.etDate?.text.toString(),
+                            binding?.etLocation?.text.toString(),
+                            mLatitude,
+                            mLongitude
+                        )
+                    }
+                }
             }
         }
     }
 
-    private fun picFromCamera(){
-        Dexter.withContext(this)
-            .withPermission(Manifest.permission.CAMERA)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    startActivityForResult(cameraIntent, CAMERA)
-                }
-
-                override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                    Toast.makeText(this@AddHappyPlaceActivity,"Camera Permission not allowed",Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest,
-                    token: PermissionToken
-                ) { /* ... */
-                }
-            }).check()
-    }
+//    private fun picFromCamera(){
+//        Toast.makeText(this@AddHappyPlaceActivity,"chal to raha h",Toast.LENGTH_SHORT).show()
+//        Dexter.withContext(this)
+//            .withPermission(Manifest.permission.CAMERA)
+//            .withListener(object : PermissionListener {
+//                override fun onPermissionGranted(response: PermissionGrantedResponse) {
+//                    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//                    startActivityForResult(cameraIntent, CAMERA)
+//                }
+//
+//                override fun onPermissionDenied(response: PermissionDeniedResponse) {
+//                    Toast.makeText(this@AddHappyPlaceActivity,"Camera Permission not allowed",Toast.LENGTH_SHORT).show()
+//                }
+//
+//                override fun onPermissionRationaleShouldBeShown(
+//                    permission: PermissionRequest,
+//                    token: PermissionToken
+//                ) { /* ... */
+//                }
+//            }).onSameThread().check()
+//    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -184,6 +213,30 @@ class AddHappyPlaceActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLis
                 binding?.ivPlaceImage?.setImageBitmap(pic)
             }
         }
+    }
+
+    private fun picFromCamera(){
+        Dexter.withContext(this).withPermissions(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+        ).withListener(object : MultiplePermissionsListener {
+            override fun onPermissionsChecked(report: MultiplePermissionsReport )
+            {
+                if (report.areAllPermissionsGranted()){
+                    Toast.makeText(this@AddHappyPlaceActivity,"Camera permission granted",Toast.LENGTH_SHORT).show()
+
+                    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    startActivityForResult(cameraIntent, CAMERA)
+
+
+                }
+            }
+            override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest> , token: PermissionToken )
+            {
+                showRationalDialogForPermissions()
+            }
+        }).onSameThread().check()
     }
 
     private fun choosePhotoFromGallery(){

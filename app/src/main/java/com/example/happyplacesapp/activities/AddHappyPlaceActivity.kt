@@ -19,6 +19,7 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.happyplacesapp.R
+import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
 import com.example.happyplacesapp.models.HappyPlaceModel
 import com.karumi.dexter.Dexter
@@ -155,6 +156,12 @@ class AddHappyPlaceActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLis
                             mLatitude,
                             mLongitude
                         )
+                    val dbHandler = DatabaseHandler(this)
+                    val addHappyPlaceResult = dbHandler.addHappyPlace(happyPlaceModel)
+                    if (addHappyPlaceResult > 0){
+                        Toast.makeText(this,"Data Inserted Successfully!",Toast.LENGTH_SHORT).show()
+                        finish()
+                        }
                     }
                 }
             }

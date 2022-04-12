@@ -160,6 +160,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLis
                     val addHappyPlaceResult = dbHandler.addHappyPlace(happyPlaceModel)
                     if (addHappyPlaceResult > 0){
                         Toast.makeText(this,"Data Inserted Successfully!",Toast.LENGTH_SHORT).show()
+                        setResult(Activity.RESULT_OK)
                         finish()
                         }
                     }

@@ -25,6 +25,8 @@
     <color name="detail_screen_description_text_color">#757575</color>
     <!--END-->
 
+    <color name="deletecolor">#dc2f02</color>
+
 
 
 </resources>

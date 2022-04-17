@@ -7,4 +7,11 @@
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:colorControlNormal">#FFFFFF</item>
     </style>
+    
+    // for dummy window
+    <style name="Theme.MyTheme" parent="android:style/Theme" >
+        ....
+        <item name="android:windowDisablePreview">true</item>
+        ....
+    </style>
 </resources>

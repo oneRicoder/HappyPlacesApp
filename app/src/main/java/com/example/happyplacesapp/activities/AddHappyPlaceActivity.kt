@@ -163,7 +163,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLis
                         Toast.makeText(this,"Please Select an Image",Toast.LENGTH_SHORT).show()
                     }else -> {
                         val happyPlaceModel = HappyPlaceModel(
-                            0,
+                            if(mHappyPlaceDetail == null) 0 else mHappyPlaceDetail!!.id,
                             binding?.etTitle?.text.toString(),
                             saveImageToInternalStorage.toString(),
                             binding?.etDescription?.text.toString(),
@@ -172,13 +172,25 @@ class AddHappyPlaceActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLis
                             mLatitude,
                             mLongitude
                         )
-                    val dbHandler = DatabaseHandler(this)
-                    val addHappyPlaceResult = dbHandler.addHappyPlace(happyPlaceModel)
-                    if (addHappyPlaceResult > 0){
-                        Toast.makeText(this,"Data Inserted Successfully!",Toast.LENGTH_SHORT).show()
-                        setResult(Activity.RESULT_OK)
-                        finish()
+
+                    if (mHappyPlaceDetail == null){
+                        val dbHandler = DatabaseHandler(this)
+                        val addHappyPlaceResult = dbHandler.addHappyPlace(happyPlaceModel)
+                        if (addHappyPlaceResult > 0){
+                            Toast.makeText(this,"Data Inserted Successfully!",Toast.LENGTH_SHORT).show()
+                            setResult(Activity.RESULT_OK)
+                            finish()
                         }
+                    }else{
+                        val dbHandler = DatabaseHandler(this)
+                        val updateHappyPlaceResult = dbHandler.updateHappyPlace(happyPlaceModel)
+                        if (updateHappyPlaceResult > 0){
+                            Toast.makeText(this,"Data Updated Successfully!",Toast.LENGTH_SHORT).show()
+                            setResult(Activity.RESULT_OK)
+                            finish()
+                        }
+                    }
+
                     }
                 }
             }

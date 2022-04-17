@@ -63,6 +63,32 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         db.close()
         return result
     }
+
+    fun updateHappyPlace(happyPlace: HappyPlaceModel): Int{
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(KEY_TITLE,happyPlace.title)
+        contentValues.put(KEY_IMAGE,happyPlace.image)
+        contentValues.put(KEY_DESCRIPTION,happyPlace.description)
+        contentValues.put(KEY_DESCRIPTION,happyPlace.description)
+        contentValues.put(KEY_DATE,happyPlace.date)
+        contentValues.put(KEY_LOCATION,happyPlace.location)
+        contentValues.put(KEY_LATITUDE,happyPlace.latitude)
+        contentValues.put(KEY_LONGITUDE,happyPlace.longitude)
+
+        val result = db.update(TABLE_HAPPY_PLACE, contentValues, KEY_ID + "=" + happyPlace.id,null)
+        db.close()
+        return result
+    }
+
+    fun deleteHappyPlace(happyPlace: HappyPlaceModel): Int {
+        val db = this.writableDatabase
+        val success = db.delete(TABLE_HAPPY_PLACE, KEY_ID + "=" + happyPlace.id, null)
+        db.close()
+        return success
+    }
+
     fun getHappyPlacesList():ArrayList<HappyPlaceModel>{
         val happyPlaceList = ArrayList<HappyPlaceModel>()
         val selectQuery = "SELECT * FROM $TABLE_HAPPY_PLACE"
